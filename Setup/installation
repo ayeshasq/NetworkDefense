@@ -1,0 +1,25 @@
+# Installation & Setup Steps — Splunk Enterprise + Universal Forwarder
+
+> Environment referenced:
+> - Splunk Enterprise server on router: `10.9.0.11`
+> - DMZ web server with Universal Forwarder: `10.9.0.5`
+> - Internal network: `192.168.60.0/24`
+
+## 1) Download Splunk Enterprise (router 10.9.0.11)
+1. On the router, download the appropriate Splunk Enterprise package (Linux .rpm/.deb or tar.gz) from https://www.splunk.com (use the version matching your OS).
+   Example:
+   ```bash
+   wget <splunk-enterprise-wget-link>
+
+
+#Install package:
+sudo dpkg -i splunk_package_name.deb
+
+#RHEL/CentOS (rpm):
+sudo rpm -ivh splunk_package_name.rpm
+
+#Tar:
+tar -xvf splunk_package_name.tgz -C /opt
+
+
+
