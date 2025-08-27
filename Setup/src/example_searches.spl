@@ -1,0 +1,43 @@
+# Example SPL searches and alerts for DMZ and router logs.
+# Save them as saved searches / alerts in Splunk web to create dashboards/alerts.
+
+############################################
+# 1) Recent HTTP 5xx responses from DMZ (last 15 min)
+index=dmz_traffic sourcetype=access_combined status>=500
+| stats count by clientip, status, uri
+| sort - count
+
+############################################
+# 2) Multiple failed login attempts (detect brute force) - saved alert
+index=dmz_traffic sourcetype=access_combined (uri="/login" OR uri="/wp-login.php")
+| stats count by clientip
+| where count >= 5
+# Configure as a real-time or scheduled alert (every 5 minutes), trigger when results > 0.
+
+############################################
+# 3) High number of requests per IP (possible DDoS indicator)
+index=dmz_traffic sourcetype=access_combined
+| bin _time span=1m
+| stats count as requests by clientip, _time
+| eventstats avg(requests) as avg_requests, stdev(requests) as sd_requests by clientip
+| where requests > (avg_requests + 3*sd_requests)
+| sort - requests
+
+############################################
+# 4) Suspicious user agents (scan for known scanner UA strings)
+index=dmz_traffic sourcetype=access_combined
+| search useragent="*curl*" OR useragent="*nikto*" OR useragent="*sqlmap*"
+| stats count by clientip, useragent, uri
+
+############################################
+# 5) Top requested URIs (for baseline & anomaly detection)
+index=dmz_traffic sourcetype=access_combined
+| stats count as hits by uri
+| sort - hits
+| head 50
+
+############################################
+# 6) Router denied traffic (if logs include firewall deny messages)
+index=router_logs sourcetype=syslog "DENIED" OR "ACL-DENY"
+| stats count by src_ip, dest_ip, dest_port, message
+| sort - count
