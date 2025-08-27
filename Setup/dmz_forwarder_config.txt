@@ -1,0 +1,33 @@
+# Splunk Universal Forwarder - sample configuration steps for DMZ (10.9.0.5)
+
+## 1) Configure outputs (receiver = Splunk indexer 10.9.0.11, port 9997 is default)
+# /opt/splunkforwarder/etc/system/local/outputs.conf
+[tcpout]
+defaultGroup = default-autolb-group
+
+[tcpout:default-autolb-group]
+server = 10.9.0.11:9997
+
+[tcpout-server://10.9.0.11:9997]
+disabled = false
+
+## 2) Configure inputs (what to monitor)
+# /opt/splunkforwarder/etc/system/local/inputs.conf
+[monitor:///var/log/apache2/access.log]
+index = dmz_traffic
+sourcetype = access_combined
+
+[monitor:///var/log/apache2/error.log]
+index = dmz_traffic
+sourcetype = apache_error
+
+## 3) Start forwarder and verify
+# Start/Restart
+/opt/splunkforwarder/bin/splunk restart
+
+# Check status:
+/opt/splunkforwarder/bin/splunk status
+
+## 4) Tips
+# - On Windows hosts, use paths like C:\inetpub\logs\LogFiles\W3SVC1\*.log
+# - Secure communication with the indexer using SSL (configure certs when moving to production)
