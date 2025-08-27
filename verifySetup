@@ -1,0 +1,5 @@
+# On DMZ server
+/opt/splunkforwarder/bin/splunk status  
+
+# Access Splunk Web UI
+http://10.9.0.11:8000
