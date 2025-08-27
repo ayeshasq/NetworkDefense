@@ -1,0 +1,16 @@
+#Install Splunk Universal Forwarder (DMZ 10.9.0.5)
+#On the DMZ host, download the Universal Forwarder package:
+#wget <splunk-forwarder-wget-link>
+
+#Install using appropriate package manager or tar extraction.Start forwarder:
+/opt/splunkforwarder/bin/splunk start --accept-license
+
+#Configure the forwarder to connect to the Splunk indexer (10.9.0.11). Example in setup/dmz_forwarder_config.txt.
+
+# Configure outputs.conf (on forwarder) and inputs.conf (on indexer/router) — see src/ files
+
+Copy src/outputs.conf to /opt/splunkforwarder/etc/system/local/outputs.conf on the forwarder (or appropriate app/local path).
+
+Copy src/inputs.conf to /opt/splunk/etc/system/local/inputs.conf on the indexer/router (or appropriate app/local path).
+
+
